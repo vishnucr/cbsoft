@@ -24,7 +24,7 @@ app.controller('SigninFormController', ['$scope', '$http', '$state', function($s
       app.factory('authService', [ 'Base64', '$http', '$cookieStore', '$rootScope', function (Base64, $http, $cookieStore, $rootScope,) {
         var service = {};
 
-        service.login = function (username,password,) {
+        service.login = function (username,password) {
           
         }
 
