@@ -1,0 +1,4 @@
+sample user api
+
+cbsoft.herokuapp.com/staff/get/?limit=10&offset=0
+access-token : admin
