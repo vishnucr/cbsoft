@@ -8,8 +8,7 @@ angular.module('app')
     ['$rootScope', '$state', '$stateParams',
         function ($rootScope, $state, $stateParams) {
             $rootScope.$state = $state;
-            $rootScope.$stateParams = $stateParams;          
-            
+            $rootScope.$stateParams = $stateParams;           
         }
     ])
     .config(
@@ -29,7 +28,7 @@ angular.module('app')
                     resolve: {
                         deps: ['$ocLazyLoad',
                             function ($ocLazyLoad) {
-                                return $ocLazyLoad.load(['js/controllers/chart.js']);
+                                return $ocLazyLoad.load(['js/controllers/chart.js','js/services/getStaff.js', 'js/controllers/dashboard.js']);
                             }]
                     }
                 })

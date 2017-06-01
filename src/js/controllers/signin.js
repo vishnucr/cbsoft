@@ -8,16 +8,17 @@ app.controller('SigninFormController', ['$rootScope','$scope', '$http', '$state'
     $scope.authError = null;    
     var loginService = authService;
 
-    // authService.clearCredential();
-    // console.log("cleared");
+    authService.clearCredential();
+
     $scope.login = function () {
         loginService.login($scope.user.username, $scope.user.password, function (response) {
             console.log(response.status);
             if (response.status <= 300) {
-                loginService.setCredential($scope.user.username, $scope.user.password);
-                $state.go('app.dashboard-v1');
+                loginService.setCredential($scope.user.username, $scope.user.password, response.data);
+                $state.go('app.dashboard-v1');     
             }
             else {
+                $scope.authError = "Login Error";
                 authService.clearCredential();
             }
         });       

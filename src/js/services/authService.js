@@ -1,6 +1,5 @@
 app.factory('authService', [ 'Base64', '$http', '$cookieStore', '$rootScope', function (Base64, $http, $cookieStore, $rootScope,) {
     var service = {};
-    
     //login function
     service.login = function (username, password,callback) {
         $http({
@@ -16,11 +15,10 @@ app.factory('authService', [ 'Base64', '$http', '$cookieStore', '$rootScope', fu
         }).then(function (success) {
             callback(success);
         },
-        function (error) {
+        function (error) {;
             callback(error);
         });
     };    
-
     //clear credentials
     service.clearCredential = function () {
         $rootScope.globals = {};
@@ -29,19 +27,23 @@ app.factory('authService', [ 'Base64', '$http', '$cookieStore', '$rootScope', fu
     };
 
     //set credentials
-    service.setCredential = function (username, password) {
+    service.setCredential = function (username, password, secret) {
         var authdata = Base64.encode(username + ':' + password);
         
         $rootScope.globals = {
             currentUser: {
                 username: username,
-                authdata: authdata
+                authdata: authdata,
+                secret : secret
             }
         };
         
         $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
         $cookieStore.put('globals', $rootScope.globals);
     };
+
+    // console.log(service);
+    // console.log($rootScope.globals);    
 
     //return service object    
     return service;

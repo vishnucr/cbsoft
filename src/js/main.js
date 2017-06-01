@@ -5,13 +5,30 @@
 // setting the basic settings for the app, 
 
 angular.module('app')
-  .controller('AppCtrl', ['$rootScope', '$scope', '$translate', '$localStorage', '$window',
-    function ($rootScope, $scope, $translate, $localStorage, $window) {
+  .controller('AppCtrl', ['$rootScope', '$scope', '$translate', '$localStorage', '$window', '$state', '$cookieStore', '$http',
+    function ($rootScope, $scope, $translate, $localStorage, $window, $state, $cookieStore, $http) {
       
-      //watching current state
-      // $scope.$watch('$state.current', function(newValue, oldValue) {
-      //   console.log(newValue);
-      // });          
+      //logout
+      $scope.logout = function () {
+        $rootScope.globals = {};
+        $cookieStore.remove('globals');
+        $http.defaults.headers.common.Authorization = 'Basic';
+      };
+
+      //setting globals
+      $rootScope.globals = $cookieStore.get('globals') || {};
+      
+      // watching current state
+      $scope.$watch('$state.current', function (newValue, oldValue) {
+        if(newValue !== 'access.signin' &&  !$rootScope.globals.currentUser) {
+          $state.go('access.signin');
+        }
+        else {
+          if ($rootScope.globals.currentUser) {
+                  $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
+            }
+        }        
+      });
       
       // add 'ie' classes to html
       var isIE = !!navigator.userAgent.match(/MSIE/i);
@@ -80,23 +97,23 @@ angular.module('app')
         return (/iPhone|iPod|iPad|Silk|Android|BlackBerry|Opera Mini|IEMobile/).test(ua);
       }
 
-    }])
-  .run(['$rootScope','$state','$cookieStore','$http', function ($rootScope, $state, $cookieStore, $http) {
-      // keep user logged in after page refresh
-      $rootScope.globals = $cookieStore.get('globals') || {};
-      if ($rootScope.globals.currentUser) {
-        $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
-      }
-      // else {
-      //   $state.go('access.signin');
-      // }
-
-
-      //error here, fix it
-      $rootScope.$on('$stateChangeStart',
-        function (event, toState, toParams, fromState, fromParams, options) {
-          if ($state.current.name !== "access.signin" && !$rootScope.globals.currentUser) {
-            $state.go('access.signin');
-          }
-        });
-  }]);
+    }]);
+  // .run(['$rootScope','$state','$cookieStore', function ($rootScope, $state, $cookieStore) {      
+  //     // keep user logged in after page refresh
+  //     $rootScope.globals = $cookieStore.get('globals') || {};
+  //     if ($rootScope.globals.currentUser) { 
+  //         $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
+  //     }
+  //     // else {
+  //     //   $state.go('access.signin');
+  //     // }
+    
+  //     // //error here, fix it
+  //     // $rootScope.$on('$stateChangeStart',
+  //     //   function (event, toState, toParams, fromState, fromParams, options) {
+  //     //     console.log($state.current.name);
+  //     //     // if ($state.current.name !== "access.signin" && !$rootScope.globals.currentUser) {
+  //     //     //   $state.go('access.signin');
+  //     //     // }
+  //     //   });
+  // }]);
